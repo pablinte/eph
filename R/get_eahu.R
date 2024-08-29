@@ -13,11 +13,13 @@
 #' disclaimer: El script no es un producto oficial de INDEC.
 #'
 #' @examples
+#' \dontrun{
 #' base_individual <- get_eahu(
 #'   year = 2010,
 #'   type = "individual",
 #'   vars = c("SUBDOMINIO", "PONDERA", "ESTADO", "CAT_OCUP")
 #' )
+#' }
 #'
 #' @export
 
@@ -39,10 +41,14 @@ get_eahu <- function(year = 2010,
 
 
   if (is.null(destfile) | !destfile_exists) {
-    attempt::stop_if_not(
-      .x = curl::has_internet(),
-      msg = "No se detecto acceso a internet. Por favor checkea tu conexion."
-    )
+    # attempt::stop_if_not(
+    #   .x = curl::has_internet(),
+    #   msg = "No se detecto acceso a internet. Por favor checkea tu conexion."
+    # )
+    if (!curl::has_internet()) { # network is down = message (not an error anymore)
+      message("No se detecto acceso a internet. Por favor checkea tu conexion.")
+      return(NULL)
+    }
 
     df <- tibble::as_tibble(expand.grid(
       year = year,
